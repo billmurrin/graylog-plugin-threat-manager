@@ -1,4 +1,4 @@
-package org.graylog.plugins.quickvaluesplus;
+package org.graylog.plugins.threatmanager;
 
 import org.graylog2.plugin.PluginMetaData;
 import org.graylog2.plugin.ServerStatus;
@@ -11,17 +11,17 @@ import java.util.Set;
 /**
  * Implement the PluginMetaData interface here.
  */
-public class QuickValuesPlusWidgetMetaData implements PluginMetaData {
-    private static final String PLUGIN_PROPERTIES = "org.graylog.plugins.graylog-plugin-quick-values-plus-widget/graylog-plugin.properties";
+public class ThreatManagerMetaData implements PluginMetaData {
+    private static final String PLUGIN_PROPERTIES = "org.graylog.plugins.graylog-plugin-threatmanager/graylog-plugin.properties";
 
     @Override
     public String getUniqueId() {
-        return "org.graylog.plugins.quickvaluesplus.QuickValuesPlusWidgetPlugin";
+        return "org.graylog.plugins.threatmanager.ThreatManagerPlugin";
     }
 
     @Override
     public String getName() {
-        return "QuickValuesPlusWidget";
+        return "ThreatManager";
     }
 
     @Override
@@ -31,7 +31,7 @@ public class QuickValuesPlusWidgetMetaData implements PluginMetaData {
 
     @Override
     public URI getURL() {
-        return URI.create("https://github.com/https://github.com/billmurrin/graylog-plugin-quick-values-plus-widget");
+        return URI.create("https://github.com/billmurrin/graylog-plugin-threat-manager");
     }
 
     @Override
@@ -42,7 +42,7 @@ public class QuickValuesPlusWidgetMetaData implements PluginMetaData {
     @Override
     public String getDescription() {
         // TODO Insert correct plugin description
-        return "Description of QuickValuesPlusWidget plugin";
+        return "The Threat Manager plugin provides a graphical interface for manager threat indicators.";
     }
 
     @Override

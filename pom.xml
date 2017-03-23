@@ -7,7 +7,7 @@
     </prerequisites>
 
     <groupId>org.graylog.plugins</groupId>
-    <artifactId>graylog-plugin-quickvaluesplus-widget</artifactId>
+    <artifactId>graylog-plugin-threat-manager</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -23,9 +23,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:https://github.com/billmurrin/graylog-plugin-quickvaluesplus-widget.git</connection>
-        <developerConnection>scm:git:git@github.com:https://github.com/billmurrin/graylog-plugin-quickvaluesplus-widget.git</developerConnection>
-        <url>https://github.com/billmurrin/graylog-plugin-quickvaluesplus-widget</url>
+        <connection>scm:git:git@github.com:https://github.com/billmurrin/graylog-plugin-threat-manager</connection>
+        <developerConnection>scm:git:git@github.com:https://github.com/billmurrin/graylog-plugin-threat-manager</developerConnection>
+        <url>https://github.com/billmurrin/graylog-plugin-threat-manager</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -37,7 +37,7 @@
         <!-- Plugins will not be deployed by default - set to `false` if you actually want to deploy it -->
         <maven.deploy.skip>true</maven.deploy.skip>
 
-        <graylog.version>2.1.1</graylog.version>
+        <graylog.version>2.2.2</graylog.version>
         <graylog.plugin-dir>/usr/share/graylog-server/plugin</graylog.plugin-dir>
     </properties>
 

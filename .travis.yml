@@ -29,6 +29,6 @@ deploy:
     - "**/target/**/*.rpm"
   skip_cleanup: true
   on:
-    repo: billmurrin/graylog-plugin-quickvaluesplus-widget
+    repo: billmurrin/graylog-plugin-threat-manager
     tags: true
     jdk: oraclejdk8

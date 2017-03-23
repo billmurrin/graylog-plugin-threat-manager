@@ -1,27 +1,12 @@
-# QuickValuesPlus Widget Plugin for Graylog2
+# Threat Manager Plugin for Graylog2
 
-[![Build Status](https://travis-ci.org/billmurrin/graylog-plugin-quickvaluesplus-widget.svg?branch=master)](https://travis-ci.org/billmurrin/graylog-plugin-quickvaluesplus-widget)
+[![Build Status](https://travis-ci.org/billmurrin/graylog-plugin-threat-manager.svg?branch=master)](https://travis-ci.org/billmurrin/graylog-plugin-threat-manager)
 
-The QuickValuesPlus Widget is a fork of the GrayLog2 Quick Values Widget that ships with GrayLog2.
-
-When the QuickValuesPlus Widget is added to a stream as a field analyzer it adds a "Remove from search" column. The button will negate the field in the search bar (E.g. !field_name:foo).
-
-In addition, the QuickValuesPlus Widget has extra features when added to a dashboard such as:
- * Support for **ascending** OR **descending** sort order in the datatable. Can now obtain true bottom values.
- * Editable number of Top/Bottom values (Quick Values default is 5). This is the one with a color in the table.
- * Customizable table size (Quick values default is 50).
-  
-**Required Graylog version:** 2.0 and later
-
-The JAR was tested in GrayLog 2.1.3, but should hopefully work in others. Please file a bug report if not.
-
-Way Ahead (Next Version)
------------
- * Add customize menu to widget when attached to a stream which allows ability to toggle sort order, top values and table size.
+The Threat Manager Plugin provides a Graphical Interface for managing and creating lists of threat indicators inside of Graylog which can be applied to streams.
 
 Installation
 ------------
-[Download the plugin](https://github.com/billmurrin/graylog-plugin-quickvaluesplus-widget/releases/)
+[Download the plugin](https://github.com/billmurrin/graylog-plugin-threat-manager/releases/)
 and place the `.jar` file in your Graylog plugin directory. The plugin directory
 is the `plugins/` folder relative from your `graylog-server` directory by default
 and can be configured in your `graylog.conf` file.
@@ -38,40 +23,46 @@ dramatically by making use of hot reloading. To do this, do the following:
 * `ln -s $YOURPLUGIN plugin/`
 * `npm install && npm start`
 
-If you run into issues with the current snapshot you can clone the 2.1.3 version of Graylog by using the following:
+If you run into issues with the current snapshot you can clone the 2.2.2 version of Graylog by using the following:
 
-`git clone -b "2.1.3" https://github.com/Graylog2/graylog2-server.git`
+`git clone -b "2.2.2" https://github.com/Graylog2/graylog2-server.git`
 
 **TIP** If you happen to use "[graylog-project](https://github.com/Graylog2/graylog-project)" and are having issues with the plugin compiling properly or not loading on the page, ensure your plugin's package.json has the same dependcies as "[graylog-plugin-sample](https://github.com/Graylog2/graylog-plugin-sample)". The example below has a few additional packages (crossfilter, d3, dc, deep-equal and immutable).
 
 ```
-"dependencies": {
-     "reflux": "^0.2.12",
-     "crossfilter": "1.3.x",
-     "d3": "<=3.5.0",
-     "dc": "2.0.0-beta.19",
-     "deep-equal": "^1.0.1",
-     "immutable": "^3.7.5"
-   },
-   "devDependencies": {
-     "babel-core": "^5.x.x",
-     "babel-loader": "^5.x.x",
-     "graylog-web-manifests": "^2.0.0-SNAPSHOT-1",
-     "graylog-web-plugin": "~0.0.17",
-     "json-loader": "^0.5.4",
-     "react": "^0.14.6",
-     "react-bootstrap": "^0.28.2",
-     "react-dom": "^0.14.6",
-     "react-hot-loader": "^1.3.0",
-     "react-proxy-loader": "^0.3.4",
-     "webpack": "^1.12.2"
-   }
+ "dependencies": {
+    "reflux": "^0.2.12",
+    "crossfilter": "1.3.x",
+    "d3": "<=3.5.0",
+    "dc": "2.0.0-beta.19",
+    "deep-equal": "^1.0.1",
+    "immutable": "^3.7.5"
+  },
+  "devDependencies": {
+    "babel-core": "^6.0.0",
+    "babel-loader": "^6.0.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-polyfill": "^6.0.0",
+    "babel-preset-es2015": "^6.0.0",
+    "babel-preset-react": "^6.0.0",
+    "babel-preset-stage-0": "^6.0.0",
+    "clean-webpack-plugin": "^0.1.3",
+    "graylog-web-manifests": "^2.0.0-SNAPSHOT-1",
+    "graylog-web-plugin": "~0.0.21",
+    "json-loader": "^0.5.4",
+    "react": "^0.14.6",
+    "react-bootstrap": "^0.28.2",
+    "react-dom": "^0.14.6",
+    "react-hot-loader": "^3.0.0-beta.3",
+    "react-proxy-loader": "^0.3.4",
+    "webpack": "^1.12.2"
+  }
 ```
 
 Usage
 -----
 
-The QuickValuesPlus Widget is similar in nature to the Quick Values plugin, it is added as a Field Analyzer. When the Widget is added to a Dashboard the additional features become available and are editable.
+To be continued.
 
 Getting started
 ---------------

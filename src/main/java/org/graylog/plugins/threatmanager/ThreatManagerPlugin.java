@@ -1,4 +1,4 @@
-package org.graylog.plugins.quickvaluesplus;
+package org.graylog.plugins.threatmanager;
 
 import org.graylog2.plugin.Plugin;
 import org.graylog2.plugin.PluginMetaData;
@@ -10,14 +10,14 @@ import java.util.Collections;
 /**
  * Implement the Plugin interface here.
  */
-public class QuickValuesPlusWidgetPlugin implements Plugin {
+public class ThreatManagerPlugin implements Plugin {
     @Override
     public PluginMetaData metadata() {
-        return new QuickValuesPlusWidgetMetaData();
+        return new ThreatManagerMetaData();
     }
 
     @Override
     public Collection<PluginModule> modules () {
-        return Collections.<PluginModule>singletonList(new QuickValuesPlusWidgetModule());
+        return Collections.<PluginModule>singletonList(new ThreatManagerModule());
     }
 }
