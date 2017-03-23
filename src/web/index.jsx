@@ -4,10 +4,10 @@ import webpackEntry from 'webpack-entry';
 import packageJson from '../../package.json';
 import { PluginManifest, PluginStore } from 'graylog-web-plugin/plugin';
 import ThreatManagerOverviewPage from 'threatmanager/ThreatManagerOverviewPage';
-import PipelineDetailsPage from 'pipelines/PipelineDetailsPage';
-import SimulatorPage from 'simulator/SimulatorPage';
-import RulesPage from 'rules/RulesPage';
-import RuleDetailsPage from 'rules/RuleDetailsPage';
+//import PipelineDetailsPage from 'pipelines/PipelineDetailsPage';
+//import SimulatorPage from 'simulator/SimulatorPage';
+//import RulesPage from 'rules/RulesPage';
+//import RuleDetailsPage from 'rules/RuleDetailsPage';
 
 PluginStore.register(new PluginManifest(packageJson, {
   routes: [

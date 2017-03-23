@@ -28,7 +28,7 @@ const ThreatManagerOverviewPage = React.createClass({
               </LinkContainer>
             </span>
           </PageHeader>
-
+        </div>
       </DocumentTitle>
     );
   },
