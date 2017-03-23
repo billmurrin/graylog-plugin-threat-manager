@@ -1,6 +1,6 @@
 {
   "name": "ThreatManager",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "GrayLog2 Threat Manager Plugin",
   "repository": {
     "type": "git",
