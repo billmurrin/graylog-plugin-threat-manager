@@ -14,18 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with Graylog Threat Manager.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.graylog.plugins.threatmanager.db;
+package org.graylog.plugins.threatmanager.events;
 
-import org.graylog2.database.NotFoundException;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.auto.value.AutoValue;
 
-import java.util.Collection;
+@AutoValue
+@JsonAutoDetect
+public abstract class LegacyDefaultStreamMigrated {
+    @JsonProperty
+    public abstract boolean migrationDone();
 
-public interface ThreatManagerService {
-    ThreatManagerDao save(ThreatManagerDao pipeline);
-
-    ThreatManagerDao load(String id) throws NotFoundException;
-
-    Collection<ThreatManagerDao> loadAll();
-
-    void delete(String id);
+    @JsonCreator
+    public static LegacyDefaultStreamMigrated create(@JsonProperty("migration_done") boolean migrationDone) {
+        return new AutoValue_LegacyDefaultStreamMigrated(migrationDone);
+    }
 }

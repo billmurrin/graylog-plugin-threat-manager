@@ -24,10 +24,10 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.graylog.plugins.pipelineprocessor.ast.Rule;
 import org.graylog.plugins.pipelineprocessor.ast.functions.Function;
-import org.graylog.plugins.pipelineprocessor.audit.PipelineProcessorAuditEventTypes;
+import org.graylog.plugins.threatmanager.audit.ThreatManagerAuditEventTypes;
 import org.graylog.plugins.threatmanager.db.IndicatorDao;
 import org.graylog.plugins.threatmanager.db.IndicatorService;
-import org.graylog.plugins.pipelineprocessor.events.RulesChangedEvent;
+import org.graylog.plugins.threatmanager.events.IndicatorsChangedEvent;
 import org.graylog.plugins.pipelineprocessor.parser.FunctionRegistry;
 import org.graylog.plugins.pipelineprocessor.parser.ParseException;
 import org.graylog.plugins.pipelineprocessor.parser.PipelineRuleParser;
@@ -67,13 +67,13 @@ IndicatorResource extends RestResource implements PluginRestResource {
 
     private static final Logger log = LoggerFactory.getLogger(IndicatorResource.class);
 
-    private final RuleService ruleService;
+    private final IndicatorService ruleService;
     private final PipelineRuleParser pipelineRuleParser;
     private final EventBus clusterBus;
     private final FunctionRegistry functionRegistry;
 
     @Inject
-    public IndicatorResource(RuleService ruleService,
+    public IndicatorResource(IndicatorService ruleService,
                         PipelineRuleParser pipelineRuleParser,
                         ClusterEventBus clusterBus,
                         FunctionRegistry functionRegistry) {
@@ -87,33 +87,33 @@ IndicatorResource extends RestResource implements PluginRestResource {
     @ApiOperation(value = "Create a processing rule from source", notes = "")
     @POST
     @RequiresPermissions(ThreatManagerRestPermissions.PIPELINE_RULE_CREATE)
-    @AuditEvent(type = PipelineProcessorAuditEventTypes.RULE_CREATE)
-    public IndicatorSource createFromParser(@ApiParam(name = "rule", required = true) @NotNull RuleSource ruleSource) throws ParseException {
+    @AuditEvent(type = ThreatManagerAuditEventTypes.RULE_CREATE)
+    public IndicatorSource createFromParser(@ApiParam(name = "rule", required = true) @NotNull IndicatorResource ruleSource) throws ParseException {
         final Rule rule;
         try {
             rule = pipelineRuleParser.parseRule(ruleSource.id(), ruleSource.source(), false);
         } catch (ParseException e) {
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity(e.getErrors()).build());
         }
-        final RuleDao newRuleSource = RuleDao.builder()
+        final IndicatorDao newRuleSource = IndicatorDao.builder()
                 .title(rule.name()) // use the name from the parsed rule source.
                 .description(ruleSource.description())
                 .source(ruleSource.source())
                 .createdAt(DateTime.now())
                 .modifiedAt(DateTime.now())
                 .build();
-        final RuleDao save = ruleService.save(newRuleSource);
+        final IndicatorDao save = ruleService.save(newRuleSource);
         // TODO determine which pipelines could change because of this new rule (there could be pipelines referring to a previously unresolved rule)
-        clusterBus.post(RulesChangedEvent.updatedRuleId(save.id()));
+        clusterBus.post(IndicatorsChangedEvent.updatedRuleId(save.id()));
         log.debug("Created new rule {}", save);
-        return RuleSource.fromDao(pipelineRuleParser, save);
+        return IndicatorResource.fromDao(pipelineRuleParser, save);
     }
 
     @ApiOperation(value = "Parse a processing rule without saving it", notes = "")
     @POST
     @Path("/parse")
     @NoAuditEvent("only used to parse a rule, no changes made in the system")
-    public RuleSource parse(@ApiParam(name = "rule", required = true) @NotNull RuleSource ruleSource) throws ParseException {
+    public IndicatorResource parse(@ApiParam(name = "rule", required = true) @NotNull IndicatorResource ruleSource) throws ParseException {
         final Rule rule;
         try {
             // be silent about parse errors here, many requests will result in invalid syntax
@@ -121,7 +121,7 @@ IndicatorResource extends RestResource implements PluginRestResource {
         } catch (ParseException e) {
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity(e.getErrors()).build());
         }
-        return RuleSource.builder()
+        return IndicatorResource.builder()
                 .title(rule.name())
                 .description(ruleSource.description())
                 .source(ruleSource.source())
@@ -132,75 +132,75 @@ IndicatorResource extends RestResource implements PluginRestResource {
 
     @ApiOperation(value = "Get all processing rules")
     @GET
-    @RequiresPermissions(PipelineRestPermissions.PIPELINE_RULE_READ)
-    public Collection<RuleSource> getAll() {
-        final Collection<RuleDao> ruleDaos = ruleService.loadAll();
+    @RequiresPermissions(ThreatManagerRestPermissions.PIPELINE_RULE_READ)
+    public Collection<IndicatorResource> getAll() {
+        final Collection<IndicatorDao> ruleDaos = ruleService.loadAll();
         return ruleDaos.stream()
-                .map(ruleDao -> RuleSource.fromDao(pipelineRuleParser, ruleDao))
+                .map(ruleDao -> IndicatorResource.fromDao(pipelineRuleParser, ruleDao))
                 .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Get a processing rule", notes = "It can take up to a second until the change is applied")
     @Path("/{id}")
     @GET
-    public RuleSource get(@ApiParam(name = "id") @PathParam("id") String id) throws NotFoundException {
-        checkPermission(PipelineRestPermissions.PIPELINE_RULE_READ, id);
-        return RuleSource.fromDao(pipelineRuleParser, ruleService.load(id));
+    public IndicatorResource get(@ApiParam(name = "id") @PathParam("id") String id) throws NotFoundException {
+        checkPermission(ThreatManagerRestPermissions.PIPELINE_RULE_READ, id);
+        return IndicatorResource.fromDao(pipelineRuleParser, ruleService.load(id));
     }
 
     @ApiOperation("Retrieve the named processing rules in bulk")
     @Path("/multiple")
     @POST
     @NoAuditEvent("only used to get multiple pipeline rules")
-    public Collection<RuleSource> getBulk(@ApiParam("rules") BulkRuleRequest rules) {
-        Collection<RuleDao> ruleDaos = ruleService.loadNamed(rules.rules());
+    public Collection<IndicatorResource> getBulk(@ApiParam("rules") BulkIndicatorRequest rules) {
+        Collection<IndicatorDao> ruleDaos = ruleService.loadNamed(rules.rules());
 
         return ruleDaos.stream()
-                .map(ruleDao -> RuleSource.fromDao(pipelineRuleParser, ruleDao))
-                .filter(rule -> isPermitted(PipelineRestPermissions.PIPELINE_RULE_READ, rule.id()))
+                .map(ruleDao -> IndicatorResource.fromDao(pipelineRuleParser, ruleDao))
+                .filter(rule -> isPermitted(ThreatManagerRestPermissions.PIPELINE_RULE_READ, rule.id()))
                 .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Modify a processing rule", notes = "It can take up to a second until the change is applied")
     @Path("/{id}")
     @PUT
-    @AuditEvent(type = PipelineProcessorAuditEventTypes.RULE_UPDATE)
-    public RuleSource update(@ApiParam(name = "id") @PathParam("id") String id,
-                             @ApiParam(name = "rule", required = true) @NotNull RuleSource update) throws NotFoundException {
-        checkPermission(PipelineRestPermissions.PIPELINE_RULE_EDIT, id);
+    @AuditEvent(type = ThreatManagerAuditEventTypes.RULE_UPDATE)
+    public IndicatorResource update(@ApiParam(name = "id") @PathParam("id") String id,
+                             @ApiParam(name = "rule", required = true) @NotNull IndicatorResource update) throws NotFoundException {
+        checkPermission(ThreatManagerRestPermissions.PIPELINE_RULE_EDIT, id);
 
-        final RuleDao ruleDao = ruleService.load(id);
+        final IndicatorDao ruleDao = ruleService.load(id);
         final Rule rule;
         try {
             rule = pipelineRuleParser.parseRule(id, update.source(), false);
         } catch (ParseException e) {
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity(e.getErrors()).build());
         }
-        final RuleDao toSave = ruleDao.toBuilder()
+        final IndicatorDao toSave = ruleDao.toBuilder()
                 .title(rule.name())
                 .description(update.description())
                 .source(update.source())
                 .modifiedAt(DateTime.now())
                 .build();
-        final RuleDao savedRule = ruleService.save(toSave);
+        final IndicatorDao savedRule = ruleService.save(toSave);
 
         // TODO determine which pipelines could change because of this updated rule
-        clusterBus.post(RulesChangedEvent.updatedRuleId(savedRule.id()));
+        clusterBus.post(IndicatorsChangedEvent.updatedRuleId(savedRule.id()));
 
-        return RuleSource.fromDao(pipelineRuleParser, savedRule);
+        return IndicatorResource.fromDao(pipelineRuleParser, savedRule);
     }
 
     @ApiOperation(value = "Delete a processing rule", notes = "It can take up to a second until the change is applied")
     @Path("/{id}")
     @DELETE
-    @AuditEvent(type = PipelineProcessorAuditEventTypes.RULE_DELETE)
+    @AuditEvent(type = ThreatManagerAuditEventTypes.RULE_DELETE)
     public void delete(@ApiParam(name = "id") @PathParam("id") String id) throws NotFoundException {
-        checkPermission(PipelineRestPermissions.PIPELINE_RULE_DELETE, id);
+        checkPermission(ThreatManagerRestPermissions.PIPELINE_RULE_DELETE, id);
         ruleService.load(id);
         ruleService.delete(id);
 
         // TODO determine which pipelines could change because of this deleted rule, causing them to recompile
-        clusterBus.post(RulesChangedEvent.deletedRuleId(id));
+        clusterBus.post(IndicatorsChangedEvent.deletedRuleId(id));
     }
 
 

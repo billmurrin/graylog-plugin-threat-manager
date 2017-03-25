@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
-import org.graylog.plugins.pipelineprocessor.db.RuleDao;
+import org.graylog.plugins.threatmanager.db.IndicatorDao;
 import org.graylog.plugins.pipelineprocessor.parser.ParseException;
 import org.graylog.plugins.pipelineprocessor.parser.PipelineRuleParser;
 import org.graylog.plugins.pipelineprocessor.parser.errors.ParseError;
@@ -87,7 +87,7 @@ public abstract class IndicatorSource {
                 .build();
     }
 
-    public static IndicatorSource fromDao(PipelineRuleParser parser, RuleDao dao) {
+    public static IndicatorSource fromDao(PipelineRuleParser parser, IndicatorDao dao) {
         Set<ParseError> errors = null;
         try {
             parser.parseRule(dao.id(), dao.source(), false);

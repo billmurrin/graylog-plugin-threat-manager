@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with Graylog Pipeline Processor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.graylog.plugins.pipelineprocessor.rest;
+package org.graylog.plugins.threatmanager.rest;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
-import org.graylog.plugins.pipelineprocessor.ast.Pipeline;
-import org.graylog.plugins.pipelineprocessor.db.PipelineDao;
-import org.graylog.plugins.pipelineprocessor.parser.ParseException;
-import org.graylog.plugins.pipelineprocessor.parser.PipelineRuleParser;
-import org.graylog.plugins.pipelineprocessor.parser.errors.ParseError;
+import org.graylog.plugins.threatmanager.ast.Pipeline;
+import org.graylog.plugins.threatmanager.db.ThreatManagerDao;
+import org.graylog.plugins.threatmanager.parser.ParseException;
+import org.graylog.plugins.threatmanager.parser.PipelineRuleParser;
+import org.graylog.plugins.threatmanager.parser.errors.ParseError;
 import org.joda.time.DateTime;
 import org.mongojack.Id;
 import org.mongojack.ObjectId;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 @AutoValue
 @JsonAutoDetect
-public abstract class PipelineSource {
+public abstract class ThreatManagerSource {
 
     @JsonProperty("id")
     @Nullable
@@ -72,13 +72,13 @@ public abstract class PipelineSource {
     public abstract Set<ParseError> errors();
 
     public static Builder builder() {
-        return new AutoValue_PipelineSource.Builder();
+        return new AutoValue_ThreatManagerSource.Builder();
     }
 
     public abstract Builder toBuilder();
 
     @JsonCreator
-    public static PipelineSource create(@JsonProperty("id") @Id @ObjectId @Nullable String id,
+    public static ThreatManagerSource create(@JsonProperty("id") @Id @ObjectId @Nullable String id,
                                         @JsonProperty("title") String title,
                                         @JsonProperty("description") @Nullable String description,
                                         @JsonProperty("source") String source,
@@ -95,7 +95,7 @@ public abstract class PipelineSource {
                 .build();
     }
 
-    public static PipelineSource fromDao(PipelineRuleParser parser, PipelineDao dao) {
+    public static ThreatManagerSource fromDao(PipelineRuleParser parser, ThreatManagerDao dao) {
         Set<ParseError> errors = null;
         Pipeline pipeline = null;
         try {
@@ -126,7 +126,7 @@ public abstract class PipelineSource {
 
     @AutoValue.Builder
     public abstract static class Builder {
-        public abstract PipelineSource build();
+        public abstract ThreatManagerSource build();
 
         public abstract Builder id(String id);
 

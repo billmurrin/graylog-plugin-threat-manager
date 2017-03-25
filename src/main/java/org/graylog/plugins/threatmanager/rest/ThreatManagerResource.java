@@ -23,13 +23,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.graylog.plugins.pipelineprocessor.ast.Pipeline;
-import org.graylog.plugins.pipelineprocessor.audit.PipelineProcessorAuditEventTypes;
-import org.graylog.plugins.pipelineprocessor.db.PipelineDao;
-import org.graylog.plugins.pipelineprocessor.db.PipelineService;
-import org.graylog.plugins.pipelineprocessor.events.PipelinesChangedEvent;
-import org.graylog.plugins.pipelineprocessor.parser.ParseException;
-import org.graylog.plugins.pipelineprocessor.parser.PipelineRuleParser;
+import org.graylog.plugins.threatmanager.ast.Pipeline;
+import org.graylog.plugins.threatmanager.audit.ThreatManagerAuditEventTypes;
+import org.graylog.plugins.threatmanager.db.ThreatManagerDao;
+import org.graylog.plugins.threatmanager.db.ThreatManagerService;
+import org.graylog.plugins.threatmanager.events.ThreatManagerChangedEvent;
+import org.graylog.plugins.threatmanager.parser.ParseException;
+import org.graylog.plugins.threatmanager.parser.PipelineRuleParser;
 import org.graylog2.audit.jersey.AuditEvent;
 import org.graylog2.audit.jersey.NoAuditEvent;
 import org.graylog2.database.NotFoundException;
@@ -63,14 +63,14 @@ import java.util.Collection;
 @RequiresAuthentication
 public class ThreatManagerResource extends RestResource implements PluginRestResource {
 
-    private static final Logger log = LoggerFactory.getLogger(ThreatManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ThreatManagerResource.class);
 
-    private final PipelineService pipelineService;
+    private final ThreatManagerService pipelineService;
     private final PipelineRuleParser pipelineRuleParser;
     private final EventBus clusterBus;
 
     @Inject
-    public PipelineResource(PipelineService pipelineService,
+    public PipelineResource(ThreatManagerService pipelineService,
                         PipelineRuleParser pipelineRuleParser,
                         ClusterEventBus clusterBus) {
         this.pipelineService = pipelineService;
@@ -80,26 +80,26 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
 
     @ApiOperation(value = "Create a processing pipeline from source", notes = "")
     @POST
-    @RequiresPermissions(PipelineRestPermissions.PIPELINE_CREATE)
-    @AuditEvent(type = PipelineProcessorAuditEventTypes.PIPELINE_CREATE)
-    public PipelineSource createFromParser(@ApiParam(name = "pipeline", required = true) @NotNull PipelineSource pipelineSource) throws ParseException {
+    @RequiresPermissions(ThreatManagerRestPermissions.PIPELINE_CREATE)
+    @AuditEvent(type = ThreatManagerAuditEventTypes.PIPELINE_CREATE)
+    public ThreatManagerSource createFromParser(@ApiParam(name = "pipeline", required = true) @NotNull ThreatManagerSource pipelineSource) throws ParseException {
         final Pipeline pipeline;
         try {
             pipeline = pipelineRuleParser.parsePipeline(pipelineSource.id(), pipelineSource.source());
         } catch (ParseException e) {
             throw new BadRequestException(Response.status(Response.Status.BAD_REQUEST).entity(e.getErrors()).build());
         }
-        final PipelineDao pipelineDao = PipelineDao.builder()
+        final ThreatManagerDao pipelineDao = ThreatManagerDao.builder()
                 .title(pipeline.name())
                 .description(pipelineSource.description())
                 .source(pipelineSource.source())
                 .createdAt(DateTime.now())
                 .modifiedAt(DateTime.now())
                 .build();
-        final PipelineDao save = pipelineService.save(pipelineDao);
-        clusterBus.post(PipelinesChangedEvent.updatedPipelineId(save.id()));
+        final ThreatManagerDao save = pipelineService.save(pipelineDao);
+        clusterBus.post(ThreatManagerChangedEvent.updatedPipelineId(save.id()));
         log.debug("Created new pipeline {}", save);
-        return PipelineSource.fromDao(pipelineRuleParser, save);
+        return ThreatManagerSource.fromDao(pipelineRuleParser, save);
     }
 
     @ApiOperation(value = "Parse a processing pipeline without saving it", notes = "")
