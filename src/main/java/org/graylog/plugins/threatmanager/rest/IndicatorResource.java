@@ -22,8 +22,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.graylog.plugins.pipelineprocessor.ast.Rule;
-import org.graylog.plugins.pipelineprocessor.ast.functions.Function;
+import org.graylog.plugins.threatmanager.ast.Rule;
+import org.graylog.plugins.threatmanager.ast.functions.Function;
 import org.graylog.plugins.threatmanager.audit.ThreatManagerAuditEventTypes;
 import org.graylog.plugins.threatmanager.db.IndicatorDao;
 import org.graylog.plugins.threatmanager.db.IndicatorService;
@@ -86,8 +86,8 @@ IndicatorResource extends RestResource implements PluginRestResource {
 
     @ApiOperation(value = "Create a processing rule from source", notes = "")
     @POST
-    @RequiresPermissions(ThreatManagerRestPermissions.PIPELINE_RULE_CREATE)
-    @AuditEvent(type = ThreatManagerAuditEventTypes.RULE_CREATE)
+    @RequiresPermissions(ThreatManagerRestPermissions.THREAT_INDICATOR_CREATE)
+    @AuditEvent(type = ThreatManagerAuditEventTypes.THREAT_INDICATOR_CREATE)
     public IndicatorSource createFromParser(@ApiParam(name = "rule", required = true) @NotNull IndicatorResource ruleSource) throws ParseException {
         final Rule rule;
         try {
@@ -132,7 +132,7 @@ IndicatorResource extends RestResource implements PluginRestResource {
 
     @ApiOperation(value = "Get all processing rules")
     @GET
-    @RequiresPermissions(ThreatManagerRestPermissions.PIPELINE_RULE_READ)
+    @RequiresPermissions(ThreatManagerRestPermissions.THREAT_INDICATOR_READ)
     public Collection<IndicatorResource> getAll() {
         final Collection<IndicatorDao> ruleDaos = ruleService.loadAll();
         return ruleDaos.stream()
@@ -144,7 +144,7 @@ IndicatorResource extends RestResource implements PluginRestResource {
     @Path("/{id}")
     @GET
     public IndicatorResource get(@ApiParam(name = "id") @PathParam("id") String id) throws NotFoundException {
-        checkPermission(ThreatManagerRestPermissions.PIPELINE_RULE_READ, id);
+        checkPermission(ThreatManagerRestPermissions.THREAT_INDICATOR_READ, id);
         return IndicatorResource.fromDao(pipelineRuleParser, ruleService.load(id));
     }
 
@@ -157,17 +157,17 @@ IndicatorResource extends RestResource implements PluginRestResource {
 
         return ruleDaos.stream()
                 .map(ruleDao -> IndicatorResource.fromDao(pipelineRuleParser, ruleDao))
-                .filter(rule -> isPermitted(ThreatManagerRestPermissions.PIPELINE_RULE_READ, rule.id()))
+                .filter(rule -> isPermitted(ThreatManagerRestPermissions.THREAT_INDICATOR_READ, rule.id()))
                 .collect(Collectors.toList());
     }
 
     @ApiOperation(value = "Modify a processing rule", notes = "It can take up to a second until the change is applied")
     @Path("/{id}")
     @PUT
-    @AuditEvent(type = ThreatManagerAuditEventTypes.RULE_UPDATE)
+    @AuditEvent(type = ThreatManagerAuditEventTypes.THREAT_INDICATOR_UPDATE)
     public IndicatorResource update(@ApiParam(name = "id") @PathParam("id") String id,
                              @ApiParam(name = "rule", required = true) @NotNull IndicatorResource update) throws NotFoundException {
-        checkPermission(ThreatManagerRestPermissions.PIPELINE_RULE_EDIT, id);
+        checkPermission(ThreatManagerRestPermissions.THREAT_INDICATOR_EDIT, id);
 
         final IndicatorDao ruleDao = ruleService.load(id);
         final Rule rule;
@@ -193,9 +193,9 @@ IndicatorResource extends RestResource implements PluginRestResource {
     @ApiOperation(value = "Delete a processing rule", notes = "It can take up to a second until the change is applied")
     @Path("/{id}")
     @DELETE
-    @AuditEvent(type = ThreatManagerAuditEventTypes.RULE_DELETE)
+    @AuditEvent(type = ThreatManagerAuditEventTypes.THREAT_INDICATOR_DELETE)
     public void delete(@ApiParam(name = "id") @PathParam("id") String id) throws NotFoundException {
-        checkPermission(ThreatManagerRestPermissions.PIPELINE_RULE_DELETE, id);
+        checkPermission(ThreatManagerRestPermissions.THREAT_INDICATOR_DELETE, id);
         ruleService.load(id);
         ruleService.delete(id);
 

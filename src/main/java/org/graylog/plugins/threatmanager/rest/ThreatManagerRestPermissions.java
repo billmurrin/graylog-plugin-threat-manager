@@ -43,7 +43,6 @@ public class ThreatManagerRestPermissions implements PluginPermissions {
     public static final String THREATLIST_CONNECTION_READ = "threatlist_connection:read";
     public static final String THREATLIST_CONNECTION_EDIT = "threatlist_connection:edit";
 
-
     @Override
     public Set<Permission> permissions() {
         return ImmutableSet.of(
