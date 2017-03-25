@@ -3,7 +3,8 @@ import { Row, Col, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import { DocumentTitle, PageHeader } from 'components/common';
-import DocumentationLink from 'components/support/DocumentationLink';
+import CreateIndicatorListButton from 'threatmanager/CreateIndicatorListButton';
+import IndicatorSummaryComponent from 'threatmanager/IndicatorSummaryComponent';
 
 import Routes from 'routing/Routes';
 import DocsHelper from 'util/DocsHelper';
@@ -15,19 +16,23 @@ const ThreatManagerOverviewPage = React.createClass({
         <div>
           <PageHeader title="Threat Manager Main">
             <span>
-              The Threat Manager lets you manage, work with, and track threat indicators.
+              Manage and Track Threat Indicators.
             </span>
 
-            <span>
-              <LinkContainer to={Routes.pluginRoute('SYSTEM_PIPELINES_SIMULATE')}>
-                <Button bsStyle="info">Simulate processing</Button>
-              </LinkContainer>
-              &nbsp;
-              <LinkContainer to={Routes.pluginRoute('SYSTEM_PIPELINES_RULES')}>
-                <Button bsStyle="info">Manage rules</Button>
-              </LinkContainer>
-            </span>
+            <Row className="content">
+              <Col md={12}>
+                <CreateIndicatorListButton currentUser={this.state.currentUser} onStreamSave={this._onSave}
+                                 indexSets={this.state.indexSets} />
+              </Col>
+            </Row>
           </PageHeader>
+
+          <Row className="content">
+            <Col md={12}>
+              <IndicatorSummaryComponent currentUser={this.state.currentUser} onStreamSave={this._onSave}
+                               indexSets={this.state.indexSets} />
+            </Col>
+          </Row>
         </div>
       </DocumentTitle>
     );
