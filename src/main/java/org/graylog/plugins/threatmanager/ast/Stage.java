@@ -35,6 +35,7 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.google.auto.value.AutoValue;
+import org.graylog.plugins.threatmanager.ThreatManager;
 import org.graylog2.shared.metrics.MetricUtils;
 
 import java.util.List;
@@ -43,9 +44,9 @@ import static com.codahale.metrics.MetricRegistry.name;
 
 @AutoValue
 public abstract class Stage implements Comparable<Stage> {
-    private List<Rule> rules;
+    private List<Indicator> rules;
     // not an autovalue property, because it introduces a cycle in hashCode() and we have no way of excluding it
-    private transient Pipeline pipeline;
+    private transient ThreatList pipeline;
     private transient Meter executed;
     private transient String meterName;
 
@@ -53,11 +54,11 @@ public abstract class Stage implements Comparable<Stage> {
     public abstract boolean matchAll();
     public abstract List<String> ruleReferences();
 
-    public List<Rule> getRules() {
+    public List<Indicator> getRules() {
         return rules;
     }
 
-    public void setRules(List<Rule> rules) {
+    public void setRules(List<Indicator> rules) {
         this.rules = rules;
     }
 
@@ -78,7 +79,7 @@ public abstract class Stage implements Comparable<Stage> {
      * @param metricRegistry the registry to add the metrics to
      */
     public void registerMetrics(MetricRegistry metricRegistry, String pipelineId) {
-        meterName = name(Pipeline.class, pipelineId, "stage", String.valueOf(stage()), "executed");
+        meterName = name(ThreatList.class, pipelineId, "stage", String.valueOf(stage()), "executed");
         executed = metricRegistry.meter(meterName);
     }
 
@@ -101,11 +102,11 @@ public abstract class Stage implements Comparable<Stage> {
         }
     }
 
-    public Pipeline getPipeline() {
+    public ThreatList getPipeline() {
         return pipeline;
     }
 
-    public void setPipeline(Pipeline pipeline) {
+    public void setPipeline(ThreatList pipeline) {
         this.pipeline = pipeline;
     }
 

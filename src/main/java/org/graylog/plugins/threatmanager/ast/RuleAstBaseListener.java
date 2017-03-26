@@ -49,32 +49,32 @@ import org.graylog.plugins.threatmanager.ast.statements.VarAssignStatement;
 
 public class RuleAstBaseListener implements RuleAstListener {
     @Override
-    public void enterRule(Rule rule) {
+    public void enterRule(Indicator rule) {
 
     }
 
     @Override
-    public void exitRule(Rule rule) {
+    public void exitRule(Indicator rule) {
 
     }
 
     @Override
-    public void enterWhen(Rule rule) {
+    public void enterWhen(Indicator rule) {
 
     }
 
     @Override
-    public void exitWhen(Rule rule) {
+    public void exitWhen(Indicator rule) {
 
     }
 
     @Override
-    public void enterThen(Rule rule) {
+    public void enterThen(Indicator rule) {
 
     }
 
     @Override
-    public void exitThen(Rule rule) {
+    public void exitThen(Indicator rule) {
 
     }
 

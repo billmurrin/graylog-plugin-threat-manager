@@ -43,8 +43,8 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 @AutoValue
-public abstract class Rule {
-    private static final Logger LOG = LoggerFactory.getLogger(Rule.class);
+public abstract class Indicator {
+    private static final Logger LOG = LoggerFactory.getLogger(Indicator.class);
 
     private transient Set<String> metricNames = Sets.newHashSet();
 
@@ -78,11 +78,11 @@ public abstract class Rule {
 
     public abstract Builder toBuilder();
 
-    public Rule withId(String id) {
+    public Indicator withId(String id) {
         return toBuilder().id(id).build();
     }
 
-    public static Rule alwaysFalse(String name) {
+    public static Indicator alwaysFalse(String name) {
         return builder().name(name).when(new BooleanExpression(new CommonToken(-1), false)).then(Collections.emptyList()).build();
     }
 
@@ -113,7 +113,7 @@ public abstract class Rule {
     }
 
     private Meter registerGlobalMeter(MetricRegistry metricRegistry, String type) {
-        final String name = MetricRegistry.name(Rule.class, id(), type);
+        final String name = MetricRegistry.name(Indicator.class, id(), type);
         metricNames.add(name);
         return metricRegistry.meter(name);
     }
@@ -121,7 +121,7 @@ public abstract class Rule {
     private Meter registerLocalMeter(MetricRegistry metricRegistry,
                                      String pipelineId,
                                      String stageId, String type) {
-        final String name = MetricRegistry.name(Rule.class, id(), pipelineId, stageId, type);
+        final String name = MetricRegistry.name(Indicator.class, id(), pipelineId, stageId, type);
         metricNames.add(name);
         return metricRegistry.meter(name);
     }
@@ -178,7 +178,7 @@ public abstract class Rule {
      * @param functionRegistry the registered functions of the system
      * @return a copy of this rule with a new instance of its generated code
      */
-    public Rule invokableCopy(FunctionRegistry functionRegistry) {
+    public Indicator invokableCopy(FunctionRegistry functionRegistry) {
         final Builder builder = toBuilder();
         final Class<? extends GeneratedRule> ruleClass = generatedRuleClass();
         if (ruleClass != null) {
@@ -205,12 +205,12 @@ public abstract class Rule {
         public abstract Builder generatedRuleClass(@Nullable Class<? extends GeneratedRule> klass);
         public abstract Builder generatedRule(GeneratedRule instance);
 
-        public abstract Rule build();
+        public abstract Indicator build();
     }
 
 
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Rule ");
+        final StringBuilder sb = new StringBuilder("Indicator ");
         sb.append("'").append(name()).append("'");
         sb.append(" (").append(id()).append(")");
         return sb.toString();

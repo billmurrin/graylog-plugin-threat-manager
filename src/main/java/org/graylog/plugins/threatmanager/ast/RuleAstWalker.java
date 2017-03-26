@@ -51,7 +51,7 @@ import java.util.Collection;
 
 public class RuleAstWalker {
 
-    public void walk(RuleAstListener listener, Rule rule) {
+    public void walk(RuleAstListener listener, Indicator rule) {
         listener.enterRule(rule);
 
         listener.enterWhen(rule);

@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.graylog.plugins.threatmanager.ast.Rule;
+import org.graylog.plugins.threatmanager.ast.Indicator;
 import org.graylog.plugins.threatmanager.ast.functions.Function;
 import org.graylog.plugins.threatmanager.audit.ThreatManagerAuditEventTypes;
 import org.graylog.plugins.threatmanager.db.IndicatorDao;
@@ -89,7 +89,7 @@ IndicatorResource extends RestResource implements PluginRestResource {
     @RequiresPermissions(ThreatManagerRestPermissions.THREAT_INDICATOR_CREATE)
     @AuditEvent(type = ThreatManagerAuditEventTypes.THREAT_INDICATOR_CREATE)
     public IndicatorSource createFromParser(@ApiParam(name = "rule", required = true) @NotNull IndicatorResource ruleSource) throws ParseException {
-        final Rule rule;
+        final Indicator rule;
         try {
             rule = pipelineRuleParser.parseRule(ruleSource.id(), ruleSource.source(), false);
         } catch (ParseException e) {
@@ -114,7 +114,7 @@ IndicatorResource extends RestResource implements PluginRestResource {
     @Path("/parse")
     @NoAuditEvent("only used to parse a rule, no changes made in the system")
     public IndicatorResource parse(@ApiParam(name = "rule", required = true) @NotNull IndicatorResource ruleSource) throws ParseException {
-        final Rule rule;
+        final Indicator rule;
         try {
             // be silent about parse errors here, many requests will result in invalid syntax
             rule = pipelineRuleParser.parseRule(ruleSource.id(), ruleSource.source(), true);
@@ -170,7 +170,7 @@ IndicatorResource extends RestResource implements PluginRestResource {
         checkPermission(ThreatManagerRestPermissions.THREAT_INDICATOR_EDIT, id);
 
         final IndicatorDao ruleDao = ruleService.load(id);
-        final Rule rule;
+        final Indicator rule;
         try {
             rule = pipelineRuleParser.parseRule(id, update.source(), false);
         } catch (ParseException e) {

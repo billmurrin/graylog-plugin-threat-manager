@@ -51,17 +51,17 @@ import org.graylog.plugins.threatmanager.ast.statements.VarAssignStatement;
  * Consider using RuleAstBaseListener to only implement the callbacks relevant to you.
  */
 public interface RuleAstListener {
-    void enterRule(Rule rule);
+    void enterRule(Indicator rule);
 
-    void exitRule(Rule rule);
+    void exitRule(Indicator rule);
 
-    void enterWhen(Rule rule);
+    void enterWhen(Indicator rule);
 
-    void exitWhen(Rule rule);
+    void exitWhen(Indicator rule);
 
-    void enterThen(Rule rule);
+    void enterThen(Indicator rule);
 
-    void exitThen(Rule rule);
+    void exitThen(Indicator rule);
 
     void enterStatement(Statement statement);
 

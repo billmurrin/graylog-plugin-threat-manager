@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
-import org.graylog.plugins.threatmanager.ast.Pipeline;
+import org.graylog.plugins.threatmanager.ast.ThreatList;
 import org.graylog.plugins.threatmanager.db.ThreatManagerDao;
 import org.graylog.plugins.threatmanager.parser.ParseException;
 import org.graylog.plugins.threatmanager.parser.PipelineRuleParser;
@@ -97,7 +97,7 @@ public abstract class ThreatManagerSource {
 
     public static ThreatManagerSource fromDao(PipelineRuleParser parser, ThreatManagerDao dao) {
         Set<ParseError> errors = null;
-        Pipeline pipeline = null;
+        ThreatList pipeline = null;
         try {
             pipeline = parser.parsePipeline(dao.id(), dao.source());
         } catch (ParseException e) {

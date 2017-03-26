@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.SortedSet;
 
 @AutoValue
-public abstract class Pipeline {
+public abstract class ThreatList {
 
     private String metricName;
     private transient Meter executed;
@@ -39,16 +39,16 @@ public abstract class Pipeline {
     public abstract SortedSet<Stage> stages();
 
     public static Builder builder() {
-        return new AutoValue_Pipeline.Builder();
+        return new AutoValue_ThreatList.Builder();
     }
 
-    public static Pipeline empty(String name) {
+    public static ThreatList empty(String name) {
         return builder().name(name).stages(Sets.<Stage>newTreeSet()).build();
     }
 
     public abstract Builder toBuilder();
 
-    public Pipeline withId(String id) {
+    public ThreatList withId(String id) {
         return toBuilder().id(id).build();
     }
 
@@ -62,7 +62,7 @@ public abstract class Pipeline {
      */
     public void registerMetrics(MetricRegistry metricRegistry) {
         if (id() != null) {
-            metricName = MetricRegistry.name(Pipeline.class, id(), "executed");
+            metricName = MetricRegistry.name(ThreatList.class, id(), "executed");
             executed = metricRegistry.meter(metricName);
         }
     }
@@ -88,7 +88,7 @@ public abstract class Pipeline {
 
     @AutoValue.Builder
     public abstract static class Builder {
-        public abstract Pipeline build();
+        public abstract ThreatList build();
 
         public abstract Builder id(String id);
 
@@ -98,7 +98,7 @@ public abstract class Pipeline {
     }
 
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Pipeline ");
+        final StringBuilder sb = new StringBuilder("ThreatList ");
         sb.append("'").append(name()).append("'");
         sb.append(" (").append(id()).append(")");
         return sb.toString();

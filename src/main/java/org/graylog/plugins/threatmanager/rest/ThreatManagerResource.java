@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.graylog.plugins.threatmanager.ast.Pipeline;
+import org.graylog.plugins.threatmanager.ast.ThreatList;
 import org.graylog.plugins.threatmanager.audit.ThreatManagerAuditEventTypes;
 import org.graylog.plugins.threatmanager.db.ThreatManagerDao;
 import org.graylog.plugins.threatmanager.db.ThreatManagerService;
@@ -83,7 +83,7 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
     @RequiresPermissions(ThreatManagerRestPermissions.THREATLIST_CREATE)
     @AuditEvent(type = ThreatManagerAuditEventTypes.THREATLIST_CREATE)
     public ThreatManagerSource createFromParser(@ApiParam(name = "pipeline", required = true) @NotNull ThreatManagerSource pipelineSource) throws ParseException {
-        final Pipeline pipeline;
+        final ThreatList pipeline;
         try {
             pipeline = pipelineRuleParser.parsePipeline(pipelineSource.id(), pipelineSource.source());
         } catch (ParseException e) {
@@ -107,7 +107,7 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
     @Path("/parse")
     @NoAuditEvent("only used to parse a pipeline, no changes made in the system")
     public ThreatManagerSource parse(@ApiParam(name = "pipeline", required = true) @NotNull ThreatManagerSource pipelineSource) throws ParseException {
-        final Pipeline pipeline;
+        final ThreatList pipeline;
         try {
             pipeline = pipelineRuleParser.parsePipeline(pipelineSource.id(), pipelineSource.source());
         } catch (ParseException e) {
@@ -154,7 +154,7 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
         checkPermission(ThreatManagerRestPermissions.THREATLIST_EDIT, id);
 
         final ThreatManagerDao dao = pipelineService.load(id);
-        final Pipeline pipeline;
+        final ThreatList pipeline;
         try {
             pipeline = pipelineRuleParser.parsePipeline(update.id(), update.source());
         } catch (ParseException e) {
