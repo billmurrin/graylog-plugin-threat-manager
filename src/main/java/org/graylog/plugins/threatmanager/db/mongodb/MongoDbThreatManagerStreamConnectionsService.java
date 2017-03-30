@@ -62,7 +62,7 @@ public class MongoDbThreatManagerStreamConnectionsService implements ThreatManag
         }
 
         final ThreatManagerConnections toSave = existingConnections.toBuilder()
-                .pipelineIds(connections.pipelineIds()).build();
+                .threatListIds(connections.threatListIds()).build();
         final WriteResult<ThreatManagerConnections, String> save = dbCollection.save(toSave);
         return save.getSavedObject();
     }

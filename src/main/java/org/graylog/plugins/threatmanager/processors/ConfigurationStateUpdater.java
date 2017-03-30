@@ -140,7 +140,7 @@ public class ConfigurationStateUpdater {
         // read all stream connections of those pipelines to allow processing messages through them
         final HashMultimap<String, ThreatList> connections = HashMultimap.create();
         for (ThreatManagerConnections streamConnection : pipelineStreamConnectionsService.loadAll()) {
-            streamConnection.pipelineIds().stream()
+            streamConnection.threatListIds().stream()
                     .map(currentPipelines::get)
                     .filter(Objects::nonNull)
                     .forEach(pipeline -> connections.put(streamConnection.streamId(), pipeline));
