@@ -27,14 +27,14 @@ import java.util.Set;
 @JsonAutoDetect
 public abstract class ThreatManagerReverseConnections {
     @JsonProperty
-    public abstract String pipelineId();
+    public abstract String threatListId();
 
     @JsonProperty
     public abstract Set<String> streamIds();
 
     @JsonCreator
-    public static ThreatManagerReverseConnections create(@JsonProperty("pipeline_id") String pipelineId,
+    public static ThreatManagerReverseConnections create(@JsonProperty("threatlist_id") String threatListId,
                                                     @JsonProperty("stream_ids") Set<String> streamIds) {
-        return new AutoValue_ThreatManagerReverseConnections(pipelineId, streamIds);
+        return new AutoValue_ThreatManagerReverseConnections(threatListId, streamIds);
     }
 }

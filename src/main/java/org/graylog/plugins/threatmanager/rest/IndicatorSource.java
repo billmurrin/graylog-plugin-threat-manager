@@ -21,9 +21,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 import org.graylog.plugins.threatmanager.db.IndicatorDao;
-import org.graylog.plugins.pipelineprocessor.parser.ParseException;
-import org.graylog.plugins.pipelineprocessor.parser.PipelineRuleParser;
-import org.graylog.plugins.pipelineprocessor.parser.errors.ParseError;
+import org.graylog.plugins.threatmanager.parser.ParseException;
+import org.graylog.plugins.threatmanager.parser.PipelineRuleParser;
+import org.graylog.plugins.threatmanager.parser.errors.ParseError;
 import org.joda.time.DateTime;
 import org.mongojack.Id;
 import org.mongojack.ObjectId;
@@ -43,14 +43,18 @@ public abstract class IndicatorSource {
 
     @JsonProperty
     @Nullable
-    public abstract String title();
+    public abstract String name();
 
     @JsonProperty
     @Nullable
-    public abstract String description();
+    public abstract String comment();
 
     @JsonProperty
     public abstract String source();
+
+    @JsonProperty
+    @Nullable
+    public abstract String reporting();
 
     @JsonProperty
     @Nullable
@@ -72,16 +76,18 @@ public abstract class IndicatorSource {
 
     @JsonCreator
     public static IndicatorSource create(@JsonProperty("id") @Id @ObjectId @Nullable String id,
-                                    @JsonProperty("title")  String title,
-                                    @JsonProperty("description") @Nullable String description,
+                                    @JsonProperty("name") String name,
+                                    @JsonProperty("comment") @Nullable String comment,
                                     @JsonProperty("source") String source,
+                                    @JsonProperty("reporting") String reporting,
                                     @JsonProperty("created_at") @Nullable DateTime createdAt,
                                     @JsonProperty("modified_at") @Nullable DateTime modifiedAt) {
         return builder()
                 .id(id)
                 .source(source)
-                .title(title)
-                .description(description)
+                .name(name)
+                .comment(comment)
+                .reporting(reporting)
                 .createdAt(createdAt)
                 .modifiedAt(modifiedAt)
                 .build();
@@ -99,8 +105,9 @@ public abstract class IndicatorSource {
         return builder()
                 .id(dao.id())
                 .source(dao.source())
-                .title(dao.title())
-                .description(dao.description())
+                .name(dao.name())
+                .comment(dao.comment())
+                .reporting(dao.reporting())
                 .createdAt(dao.createdAt())
                 .modifiedAt(dao.modifiedAt())
                 .errors(errors)
@@ -113,11 +120,13 @@ public abstract class IndicatorSource {
 
         public abstract Builder id(String id);
 
-        public abstract Builder title(String title);
+        public abstract Builder name(String name);
 
-        public abstract Builder description(String description);
+        public abstract Builder comment(String comment);
 
         public abstract Builder source(String source);
+
+        public abstract Builder reporting(String reporting);
 
         public abstract Builder createdAt(DateTime createdAt);
 
@@ -126,3 +135,5 @@ public abstract class IndicatorSource {
         public abstract Builder errors(Set<ParseError> errors);
     }
 }
+
+

@@ -40,16 +40,16 @@ public abstract class ThreatManagerConnections {
     public abstract String streamId();
 
     @JsonProperty
-    public abstract Set<String> pipelineIds();
+    public abstract Set<String> threatListIds();
 
     @JsonCreator
     public static ThreatManagerConnections create(@JsonProperty("id") @Id @ObjectId @Nullable String id,
                                              @JsonProperty("stream_id") String streamId,
-                                             @JsonProperty("pipeline_ids") Set<String> pipelineIds) {
+                                             @JsonProperty("threatlist_ids") Set<String> threatListIds) {
         return builder()
                 .id(id)
                 .streamId(streamId)
-                .pipelineIds(pipelineIds)
+                .threatListIds(threatListIds)
                 .build();
     }
 
@@ -67,6 +67,6 @@ public abstract class ThreatManagerConnections {
 
         public abstract Builder streamId(String streamId);
 
-        public abstract Builder pipelineIds(Set<String> pipelineIds);
+        public abstract Builder threatListIds(Set<String> threatListIds);
     }
 }

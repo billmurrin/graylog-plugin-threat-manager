@@ -56,8 +56,8 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Api(value = "Pipelines/Pipelines", description = "Pipelines for the pipeline message processor")
-@Path("/system/pipelines/pipeline")
+@Api(value = "ThreatManager/ThreatLists", description = "Threat Manager Threat Lists")
+@Path("/system/threatmanager/threatlist")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @RequiresAuthentication
@@ -70,7 +70,7 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
     private final EventBus clusterBus;
 
     @Inject
-    public PipelineResource(ThreatManagerService pipelineService,
+    public ThreatManagerResource(ThreatManagerService pipelineService,
                         PipelineRuleParser pipelineRuleParser,
                         ClusterEventBus clusterBus) {
         this.pipelineService = pipelineService;
@@ -78,11 +78,11 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
         this.clusterBus = clusterBus;
     }
 
-    @ApiOperation(value = "Create a processing pipeline from source", notes = "")
+    @ApiOperation(value = "Create a threatlist from source", notes = "")
     @POST
     @RequiresPermissions(ThreatManagerRestPermissions.THREATLIST_CREATE)
     @AuditEvent(type = ThreatManagerAuditEventTypes.THREATLIST_CREATE)
-    public ThreatManagerSource createFromParser(@ApiParam(name = "pipeline", required = true) @NotNull ThreatManagerSource pipelineSource) throws ParseException {
+    public ThreatManagerSource createFromParser(@ApiParam(name = "threatlist", required = true) @NotNull ThreatManagerSource pipelineSource) throws ParseException {
         final ThreatList pipeline;
         try {
             pipeline = pipelineRuleParser.parsePipeline(pipelineSource.id(), pipelineSource.source());
@@ -106,7 +106,7 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
     @POST
     @Path("/parse")
     @NoAuditEvent("only used to parse a pipeline, no changes made in the system")
-    public ThreatManagerSource parse(@ApiParam(name = "pipeline", required = true) @NotNull ThreatManagerSource pipelineSource) throws ParseException {
+    public ThreatManagerSource parse(@ApiParam(name = "threatlist", required = true) @NotNull ThreatManagerSource pipelineSource) throws ParseException {
         final ThreatList pipeline;
         try {
             pipeline = pipelineRuleParser.parsePipeline(pipelineSource.id(), pipelineSource.source());
@@ -122,7 +122,7 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
                 .build();
     }
 
-    @ApiOperation(value = "Get all processing pipelines")
+    @ApiOperation(value = "Get all threat lists")
     @GET
     public Collection<ThreatManagerSource> getAll() {
         final Collection<ThreatManagerDao> daos = pipelineService.loadAll();
@@ -136,7 +136,7 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
         return results;
     }
 
-    @ApiOperation(value = "Get a processing pipeline", notes = "It can take up to a second until the change is applied")
+    @ApiOperation(value = "Get a threat list", notes = "It can take up to a second until the change is applied")
     @Path("/{id}")
     @GET
     public ThreatManagerSource get(@ApiParam(name = "id") @PathParam("id") String id) throws NotFoundException {
@@ -145,12 +145,12 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
         return ThreatManagerSource.fromDao(pipelineRuleParser, dao);
     }
 
-    @ApiOperation(value = "Modify a processing pipeline", notes = "It can take up to a second until the change is applied")
+    @ApiOperation(value = "Modify a threat list", notes = "It can take up to a second until the change is applied")
     @Path("/{id}")
     @PUT
     @AuditEvent(type = ThreatManagerAuditEventTypes.THREATLIST_UPDATE)
     public ThreatManagerSource update(@ApiParam(name = "id") @PathParam("id") String id,
-                             @ApiParam(name = "pipeline", required = true) @NotNull ThreatManagerSource update) throws NotFoundException {
+                             @ApiParam(name = "threatlist", required = true) @NotNull ThreatManagerSource update) throws NotFoundException {
         checkPermission(ThreatManagerRestPermissions.THREATLIST_EDIT, id);
 
         final ThreatManagerDao dao = pipelineService.load(id);
@@ -172,7 +172,7 @@ public class ThreatManagerResource extends RestResource implements PluginRestRes
         return ThreatManagerSource.fromDao(pipelineRuleParser, savedPipeline);
     }
 
-    @ApiOperation(value = "Delete a processing pipeline", notes = "It can take up to a second until the change is applied")
+    @ApiOperation(value = "Delete a threat list", notes = "It can take up to a second until the change is applied")
     @Path("/{id}")
     @DELETE
     @AuditEvent(type = ThreatManagerAuditEventTypes.THREATLIST_DELETE)

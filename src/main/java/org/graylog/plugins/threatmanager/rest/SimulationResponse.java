@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
-import org.graylog.plugins.pipelineprocessor.simulator.PipelineInterpreterTrace;
+import org.graylog.plugins.threatmanager.simulator.PipelineInterpreterTrace;
 import org.graylog2.rest.models.messages.responses.ResultMessageSummary;
 
 import java.util.List;

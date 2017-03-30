@@ -49,8 +49,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Api(value = "Pipelines/Connections", description = "Stream connections of processing pipelines")
-@Path("/system/pipelines/connections")
+@Api(value = "ThreatManager/Connections", description = "Stream connections of processing pipelines")
+@Path("/system/threatmanager/connections")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @RequiresAuthentication
@@ -85,41 +85,41 @@ public class ThreatManagerConnectionsResource extends RestResource implements Pl
         streamService.load(streamId);
 
         // verify the pipelines exist
-        for (String s : connection.pipelineIds()) {
+        for (String s : connection.threatListIds()) {
             checkPermission(ThreatManagerRestPermissions.THREATLIST_READ, s);
             pipelineService.load(s);
         }
         return saveThreatManagerConnections(connection);
     }
 
-    @ApiOperation(value = "Connect streams to a processing pipeline", notes = "")
+    @ApiOperation(value = "Connect streams to a threatlist", notes = "")
     @POST
-    @Path("/to_pipeline")
+    @Path("/to_threatlist")
     @RequiresPermissions(ThreatManagerRestPermissions.THREATLIST_CONNECTION_EDIT)
     @AuditEvent(type = ThreatManagerAuditEventTypes.THREATLIST_CONNECTION_UPDATE)
     public Set<ThreatManagerConnections> connectStreams(@ApiParam(name = "Json body", required = true) @NotNull ThreatManagerReverseConnections connection) throws NotFoundException {
-        final String pipelineId = connection.pipelineId();
+        final String threatListId = connection.threatListId();
         final Set<ThreatManagerConnections> updatedConnections = Sets.newHashSet();
 
         // verify the pipeline exists
-        checkPermission(ThreatManagerRestPermissions.THREATLIST_READ, pipelineId);
-        pipelineService.load(pipelineId);
+        checkPermission(ThreatManagerRestPermissions.THREATLIST_READ, threatListId);
+        pipelineService.load(threatListId);
 
         // get all connections where the pipeline was present
         final Set<ThreatManagerConnections> pipelineConnections = connectionsService.loadAll().stream()
-                .filter(p -> p.pipelineIds().contains(pipelineId))
+                .filter(p -> p.threatListIds().contains(threatListId))
                 .collect(Collectors.toSet());
 
         // remove deleted pipeline connections
         for (ThreatManagerConnections pipelineConnection : pipelineConnections) {
             if (!connection.streamIds().contains(pipelineConnection.streamId())) {
-                final Set<String> pipelines = pipelineConnection.pipelineIds();
-                pipelines.remove(connection.pipelineId());
-                pipelineConnection.toBuilder().pipelineIds(pipelines).build();
+                final Set<String> pipelines = pipelineConnection.threatListIds();
+                pipelines.remove(connection.threatListId());
+                pipelineConnection.toBuilder().threatListIds(pipelines).build();
 
                 updatedConnections.add(pipelineConnection);
                 saveThreatManagerConnections(pipelineConnection);
-                LOG.debug("Deleted stream {} connection with pipeline {}", pipelineConnection.streamId(), pipelineId);
+                LOG.debug("Deleted stream {} connection with threatlist {}", pipelineConnection.streamId(), threatListId);
             }
         }
 
@@ -136,19 +136,19 @@ public class ThreatManagerConnectionsResource extends RestResource implements Pl
                 updatedConnection = ThreatManagerConnections.create(null, streamId, Sets.newHashSet());
             }
 
-            final Set<String> pipelines = updatedConnection.pipelineIds();
-            pipelines.add(pipelineId);
-            updatedConnection.toBuilder().pipelineIds(pipelines).build();
+            final Set<String> pipelines = updatedConnection.threatListIds();
+            pipelines.add(threatListId);
+            updatedConnection.toBuilder().threatListIds(pipelines).build();
 
             updatedConnections.add(updatedConnection);
             saveThreatManagerConnections(updatedConnection);
-            LOG.debug("Added stream {} connection with pipeline {}", streamId, pipelineId);
+            LOG.debug("Added stream {} connection with threatlist {}", streamId, threatListId);
         }
 
         return updatedConnections;
     }
 
-    @ApiOperation("Get pipeline connections for the given stream")
+    @ApiOperation("Get threatlist connections for the given stream")
     @GET
     @Path("/{streamId}")
     @RequiresPermissions(ThreatManagerRestPermissions.THREATLIST_CONNECTION_READ)
@@ -161,14 +161,14 @@ public class ThreatManagerConnectionsResource extends RestResource implements Pl
         return ThreatManagerConnections.create(
                 connections.id(),
                 connections.streamId(),
-                connections.pipelineIds()
+                connections.threatListIds()
                         .stream()
                         .filter(id -> isPermitted(ThreatManagerRestPermissions.THREATLIST_READ, id))
                         .collect(Collectors.toSet())
         );
     }
 
-    @ApiOperation("Get all pipeline connections")
+    @ApiOperation("Get all threatlist connections")
     @GET
     @RequiresPermissions(ThreatManagerRestPermissions.THREATLIST_CONNECTION_READ)
     public Set<ThreatManagerConnections> getAll() throws NotFoundException {
@@ -182,7 +182,7 @@ public class ThreatManagerConnectionsResource extends RestResource implements Pl
                 filteredConnections.add(ThreatManagerConnections.create(
                         pc.id(),
                         pc.streamId(),
-                        pc.pipelineIds()
+                        pc.threatListIds()
                                 .stream()
                                 .filter(id -> isPermitted(ThreatManagerRestPermissions.THREATLIST_READ, id))
                                 .collect(Collectors.toSet()))
@@ -195,7 +195,7 @@ public class ThreatManagerConnectionsResource extends RestResource implements Pl
 
     private ThreatManagerConnections saveThreatManagerConnections(ThreatManagerConnections connection) {
         final ThreatManagerConnections save = connectionsService.save(connection);
-        clusterBus.post(ThreatManagerConnectionsChangedEvent.create(save.streamId(), save.pipelineIds()));
+        clusterBus.post(ThreatManagerConnectionsChangedEvent.create(save.streamId(), save.threatListIds()));
         return save;
     }
 

@@ -73,7 +73,7 @@ public abstract class Indicator {
     public abstract GeneratedRule generatedRule();
 
     public static Builder builder() {
-        return new AutoValue_Rule.Builder();
+        return new AutoValue_Indicator.Builder();
     }
 
     public abstract Builder toBuilder();
