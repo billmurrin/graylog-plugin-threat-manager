@@ -65,9 +65,6 @@ public abstract class ThreatManagerSource {
     public abstract DateTime modifiedAt();
 
     @JsonProperty
-    public abstract List<StageSource> stages();
-
-    @JsonProperty
     @Nullable
     public abstract Set<ParseError> errors();
 
@@ -91,7 +88,6 @@ public abstract class ThreatManagerSource {
                 .source(source)
                 .createdAt(createdAt)
                 .modifiedAt(modifiedAt)
-                .stages(Collections.emptyList())
                 .build();
     }
 
@@ -103,14 +99,6 @@ public abstract class ThreatManagerSource {
         } catch (ParseException e) {
             errors = e.getErrors();
         }
-        final List<StageSource> stageSources = (pipeline == null) ? Collections.emptyList() :
-                pipeline.stages().stream()
-                        .map(stage -> StageSource.builder()
-                                .matchAll(stage.matchAll())
-                                .rules(stage.ruleReferences())
-                                .stage(stage.stage())
-                                .build())
-                        .collect(Collectors.toList());
 
         return builder()
                 .id(dao.id())
@@ -119,7 +107,6 @@ public abstract class ThreatManagerSource {
                 .source(dao.source())
                 .createdAt(dao.createdAt())
                 .modifiedAt(dao.modifiedAt())
-                .stages(stageSources)
                 .errors(errors)
                 .build();
     }
@@ -139,8 +126,6 @@ public abstract class ThreatManagerSource {
         public abstract Builder createdAt(DateTime createdAt);
 
         public abstract Builder modifiedAt(DateTime modifiedAt);
-
-        public abstract Builder stages(List<StageSource> stages);
 
         public abstract Builder errors(Set<ParseError> errors);
     }
