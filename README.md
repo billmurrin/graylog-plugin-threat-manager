@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/billmurrin/graylog-plugin-threat-manager.svg?branch=master)](https://travis-ci.org/billmurrin/graylog-plugin-threat-manager)
 
-This plugin is still being conceptualized and is currently in **ALPHA**.
+This plugin is still being conceptualized and is currently in **PRE-ALPHA**. It does not work yet.
 
-The Threat Manager Plugin provides a Graphical Interface for managing and creating lists of threat indicators inside of Graylog which can be applied to streams.
+The Threat Manager Plugin will, eventually, provide a Graphical Interface within Graylog for managing and creating lists of threat indicators inside of Graylog which can be applied to streams.
 
 Installation
 ------------
